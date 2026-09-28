@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MineGuard | Vehicle Safety</title>
+<style>
+
+:root {
+  --bg: #090d12;
+  --panel: #111720;
+  --line: #1e293b;
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --cyan: #00e5ff;
+  --amber: #ffab00;
+  --green: #00e676;
+  --red: #d94125;
+}
+
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;background-image:radial-gradient(ellipse at 8% 4%,rgba(30,108,128,.22),transparent 36%),radial-gradient(ellipse at 95% 18%,rgba(202,119,38,.13),transparent 32%),linear-gradient(145deg,#080f1b,#0b1728 48%,#101a2a);background-attachment:fixed}
+
+button,input{font:inherit}button{cursor:pointer;border:0;border-radius:9px;padding:10px 14px;font-weight:700}
+.hidden{display:none!important}.muted{color:var(--muted)}.tiny{font-size:11px}.tag{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:20px;padding:4px 9px;font-size:11px;color:var(--muted)}.dot{width:7px;height:7px;border-radius:50%;display:inline-block;background:var(--green)}.dot.amber{background:var(--amber)}.dot.red{background:var(--red)}
+#login{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:28px;position:relative;overflow:hidden;background:var(--bg)}
+#login:after{content:"";position:absolute;width:650px;height:650px;right:-190px;bottom:-330px;border:1px solid #6c8da033;border-radius:50%;box-shadow:0 0 0 48px #6c8da011,0 0 0 96px #6c8da00b,0 0 0 144px #6c8da008;pointer-events:none}
+.eyebrow{margin-top:25px;color:var(--cyan);font-size:10px;font-weight:900;letter-spacing:2px}
+.login-card{position:relative;z-index:1;width:min(500px,100%);background:linear-gradient(145deg,rgba(20,34,53,.97),rgba(10,20,34,.97));border:1px solid #3a526b;border-radius:22px;padding:32px;box-shadow:0 30px 100px #0008,inset 0 1px #ffffff0a}
+.login-card h1{font-size:30px;letter-spacing:-.7px;margin:10px 0 6px}.login-card p{line-height:1.6}
+.role-select{grid-template-columns:1fr 1fr;gap:11px;margin:24px 0 20px}
+.role-select button{min-height:105px;text-align:left;display:flex;flex-direction:column;gap:8px;font-size:18px;border-radius:12px;padding:16px}
+.role-select button span{font-size:13px;color:var(--text)}.role-select button small{font-size:10px;color:var(--muted);font-weight:500}
+select{width:100%;padding:13px;border-radius:9px;border:1px solid var(--line);background:#0a1424;color:var(--text);outline:none}
+.login-caption{position:relative;z-index:1;font-size:10px;letter-spacing:2px;color:#8096ad;text-align:center}.login-caption span{color:#e9a44b;margin:0 8px}
+.demo-hint{background:#0b1929;border-color:#34506a}
+.primary{font-size:14px;padding:14px;letter-spacing:.2px}
+header{background:rgba(8,17,29,.94);backdrop-filter:blur(16px);border-bottom:1px solid #2b4058}
+.stat,.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.5);}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px;position:relative;overflow:hidden;}
+.panel-head{background:rgba(255,255,255,.012)}
+.page-heading h1{letter-spacing:-.5px}
+
+.login-card{width:min(460px,100%);background:rgba(18,29,48,.96);border:1px solid var(--line);border-radius:22px;padding:30px;box-shadow:0 24px 80px #0005}
+.brand{display:flex;align-items:center;gap:12px;font-weight:900;font-size:20px;letter-spacing:.3px}.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,#fbbf24,#f97316);display:grid;place-items:center;color:#101827;font-size:22px}
+.login-card h1{font-size:27px;margin:24px 0 5px}.login-card p{color:var(--muted);margin:0 0 22px}.role-select{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px}.role-select button{background:#0c1627;color:var(--muted);border:1px solid var(--line)}.role-select button.active{color:var(--text);border-color:var(--cyan);background:#123044}
+label{display:block;color:#b9c8da;font-size:12px;font-weight:700;margin:12px 0 6px}input{width:100%;padding:12px 13px;border-radius:9px;border:1px solid var(--line);background:#0a1424;color:var(--text);outline:none}input:focus{border-color:var(--cyan)}.primary{background:var(--cyan);color:#05202a;width:100%;margin-top:18px}.demo-hint{margin-top:16px;padding:12px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);font-size:12px}
+header{height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--line);background:#0d1728;position:sticky;top:0;z-index:5}
+.header-right{display:flex;align-items:center;gap:12px}.user-pill{background:var(--panel2);border:1px solid var(--line);border-radius:20px;padding:7px 12px;font-size:12px}.logout{background:transparent;color:var(--muted);border:1px solid var(--line)}
+main{max-width:1600px;margin:auto;padding:22px 24px 36px}.page-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}.page-heading h1{font-size:24px;margin:0 0 4px}.page-heading p{margin:0;color:var(--muted)}.live{color:var(--green);font-size:12px;font-weight:800}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:15px}.stat,.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px}.stat{padding:15px 17px}.stat-label{font-size:12px;color:var(--muted)}.stat-value{font-size:26px;font-weight:850;margin-top:5px}.stat-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.grid-main{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(310px,1fr);gap:15px}.panel{overflow:hidden}.panel-head{display:flex;justify-content:space-between;align-items:center;padding:15px 17px;border-bottom:1px solid var(--line);gap:10px}.panel-head h2{font-size:14px;margin:0}.panel-body{padding:15px 17px}.map-wrap{position:relative;background:#101e2d;min-height:390px}.mine-map{width:100%;height:390px;display:block}
+.leaflet-map{width:100%;height:390px;background:#080c10;z-index:1}.leaflet-container{font-family:inherit;color:#172536}.leaflet-control-zoom a{color:#152235!important}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#132239;color:#eaf1fb}.leaflet-popup-content{font-size:12px}.leaflet-control-attribution{font-size:9px!important}
+.map-legend{position:absolute;bottom:12px;left:12px;background:#0b1424eF;border:1px solid var(--line);padding:9px 11px;border-radius:9px;display:flex;gap:13px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
+.map-legend span{display:flex;align-items:center;gap:6px}.legend-line{width:18px;height:3px;background:var(--amber);display:inline-block}.legend-truck{width:9px;height:9px;border-radius:2px;background:var(--cyan);display:inline-block}
+.map-note{position:absolute;right:12px;top:12px;padding:7px 10px;background:#0b1424eF;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:11px}
+.stack{display:grid;gap:15px}.vehicle-list{display:grid;gap:8px}.vehicle-row{display:grid;grid-template-columns:1fr auto;gap:8px;padding:11px;background:#0d1829;border:1px solid var(--line);border-radius:10px}.vehicle-row strong{display:block;font-size:13px}.status{font-size:11px;font-weight:800}.status.ok{color:var(--green)}.status.warn{color:var(--amber)}.status.danger{color:var(--red)}
+.sensor-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.sensor{background:#0d131c;border:1px solid var(--line);border-radius:6px;padding:14px;transition:all 0.2s;}.sensor-title{font-size:11px;color:var(--muted)}.sensor-value{font-size:21px;font-weight:800;margin:5px 0 2px}.sensor-foot{font-size:10px;color:var(--muted)}
+.alert{display:flex;gap:10px;align-items:flex-start;border-radius:10px;padding:12px;margin-bottom:9px;background:#291d22;border:1px solid #713542}.alert.amber{background:rgba(255, 171, 0, 0.1);border-color:var(--amber)}.alert.blue{background:rgba(0, 229, 255, 0.1);border-color:var(--cyan)}.alert-icon{font-size:18px}.alert strong{display:block;font-size:12px}.alert p{margin:3px 0 0;font-size:11px;color:#bdc8d7}
+.action-bar{display:flex;gap:8px;flex-wrap:wrap}.action{background:#1b2b40;border:1px solid var(--line);color:var(--text)}.action.stop{background:#4a202b;border-color:#853748;color:#ffdce2}.action.slow{background:#463718;border-color:#80632b;color:#ffefc1}
+.call-btn{background:var(--red);color:#270810;width:100%;font-size:14px;padding:13px}.call-btn:disabled{opacity:.5;cursor:not-allowed}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:650px}th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);font-size:12px}th{color:var(--muted);font-weight:700;background:#0e192a}td{color:#dce6f4}.small-btn{padding:6px 9px;font-size:11px;background:#1b2b40;color:var(--text);border:1px solid var(--line)}
+.call-banner{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#381a24;border:1px solid #a13e53;border-radius:12px;padding:13px 15px;margin-bottom:14px}.call-banner strong{color:#ffdbe2}.ack{background:var(--red);color:#2a0911;padding:8px 12px}
+.footer-note{margin-top:15px;color:#7388a4;font-size:11px;text-align:center}
+@media(max-width:900px){.grid-main{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.map-wrap,.mine-map,.leaflet-map{width:100%;height:390px;background:#080c10;z-index:1}}
+@media(max-width:520px){header{padding:0 13px}.brand{font-size:16px}main{padding:17px 12px}.stats{gap:8px}.stat{padding:12px}.stat-value{font-size:22px}.page-heading{flex-direction:column}.login-card{padding:22px}}
+
+.stat { position: relative; overflow: hidden; }
+.stat-icon { position: absolute; right: -5px; bottom: -10px; width: 85px; height: 85px; opacity: 0.05; color: var(--cyan); z-index: 0; pointer-events: none; }
+.stat > div { position: relative; z-index: 1; }
+
+
+.sensor{background:#0d131c;border:1px solid var(--line);border-radius:6px;padding:14px;transition:all 0.2s;}
+.sensor:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.5); border-color: #3a526b; }
+
+
+.radar-scope { width: 120px; height: 120px; border-radius: 50%; border: 1px solid rgba(0, 229, 255, 0.3); background: #080c10; position: relative; overflow: hidden; margin: 15px auto; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
+.radar-scope::before { content: ''; position: absolute; width: 100%; height: 1px; background: rgba(0, 229, 255, 0.2); top: 50%; }
+.radar-scope::after { content: ''; position: absolute; height: 100%; width: 1px; background: rgba(0, 229, 255, 0.2); left: 50%; }
+.radar-sweep { position: absolute; width: 50%; height: 50%; top: 0; right: 0; transform-origin: bottom left; background: linear-gradient(to top right, rgba(0,229,255,0.5) 0%, transparent 60%); animation: sweep 3s linear infinite; pointer-events: none; }
+.radar-ring-1 { position: absolute; width: 70%; height: 70%; border-radius: 50%; border: 1px solid rgba(0, 229, 255, 0.15); top: 15%; left: 15%; }
+.radar-ring-2 { position: absolute; width: 35%; height: 35%; border-radius: 50%; border: 1px solid rgba(0, 229, 255, 0.15); top: 32.5%; left: 32.5%; }
+@keyframes sweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.blip { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 6px var(--amber); top: 30%; left: 60%; transition: all 0.5s ease-out; }
+.blip.danger { background: var(--red); box-shadow: 0 0 8px var(--red); animation: pulse-blip 1s infinite; }
+@keyframes pulse-blip { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.5); } 100% { opacity: 1; transform: scale(1); } }
+
+</style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+<body>
+
+
+  <section id="login">
+   <div class="login-card">
+      <!-- Language Selection -->
+      <div style="margin-bottom: 24px; text-align: center; border-bottom: 1px solid var(--line); padding-bottom: 20px;">
+        <p style="font-size: 11px; color: var(--cyan); margin-bottom: 12px; font-weight: 700; letter-spacing: 1px;">CHOOSE REGIONAL LANGUAGE</p>
+        <div style="display: flex; gap: 8px; justify-content: center;">
+          <button type="button" class="lang-btn active" onclick="setLang('en', this)" style="flex:1; padding:10px; background:var(--bg); border:1px solid var(--line); color:var(--text); border-radius:6px; font-weight:bold; cursor:pointer; transition:all 0.2s;">English</button>
+          <button type="button" class="lang-btn" onclick="setLang('hi', this)" style="flex:1; padding:10px; background:var(--bg); border:1px solid var(--line); color:var(--text); border-radius:6px; font-weight:bold; cursor:pointer; transition:all 0.2s;">हिंदी</button>
+          
+        </div>
+      </div>
+  
+    <div class="brand"><div class="logo">⬡</div><div>MINEGUARD <div class="tiny muted" style="letter-spacing:2px;font-weight:700">INTELLIGENT MINE FLEET SAFETY</div></div></div>
+    <div class="eyebrow">LOW-VISIBILITY HAUL ROAD ASSISTANCE</div>
+    <h1>Control Centre Setup</h1>
+    <p>Configure your fleet supervision workspace.</p>
+    
+    
+    <button id="loginBtn" class="primary" onclick="login()">Start Dashboard</button>
+   </div>
+  </section>
+<div id="app" class="hidden">
+<header><div class="brand"><div class="logo" style="background:var(--red);color:#fff;border-radius:4px;font-weight:900;letter-spacing:-1px;border:1px solid rgba(255,255,255,0.2);">NMDC</div>
+
+    
+<span style="font-weight:bold;letter-spacing:1px;">BAILADILA IRON ORE 
+
+
+
+
+
+</span></div><div class="header-right"><span class="tag"><i class="dot"></i> DEMO SIMULATION</span><span class="user-pill" id="userBadge">Driver</span><button class="logout" onclick="logout()">Log out</button></div></header>
+<main id="driverPage" class="hidden">
+ <div class="page-heading"><div><h1>In-cab operator interface</h1><p>Mine road guidance · vehicle awareness · emergency assistance</p></div><span class="live">● SYSTEM ONLINE</span></div>
+ <div class="stats">
+  <div class="stat"><svg class="stat-icon" style="color: var(--green);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"></path></svg><div class="stat-label">YOUR VEHICLE</div><div class="stat-value" id="driverVehicle">MG-104</div><div class="stat-sub">Registered dumper</div></div>
+  <div class="stat"><svg class="stat-icon" style="color: var(--cyan);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"></path></svg><div class="stat-label">CURRENT SPEED</div><div class="stat-value"><span id="speed">18</span> <small style="font-size:12px">km/h</small></div><div class="stat-sub">Simulated vehicle telemetry</div></div>
+  <div class="stat"><svg class="stat-icon" style="color: var(--amber);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5"></path></svg><div class="stat-label">NEAREST VEHICLE</div><div class="stat-value"><span id="nearDistance">42</span> <small style="font-size:12px">m</small></div><div class="stat-sub" id="nearName">MG-102 · ahead</div></div>
+  <div class="stat"><svg class="stat-icon" style="color: var(--blue);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.327A3 3 0 0014 8.5h-.441A5.25 5.25 0 004.5 10.5C2.79 10.5 1.5 12 1.5 13.5v1.5z"></path></svg><div class="stat-label">ROAD VISIBILITY</div><div class="stat-value"><span id="visibility">18</span> <small style="font-size:12px">m</small></div><div class="stat-sub">Low-visibility conditions</div></div>
+ </div>
+ <div class="grid-main">
+  <div class="stack">
+   <section class="panel"><div class="panel-head"><h2>Mine geospatial view & vehicle position</h2><span class="tag">PRE-BUILT MAP · DEMO</span></div><div class="map-wrap"><div id="driverMap" class="leaflet-map"></div><div class="map-note">Illustrative mine map · demo route</div><div class="map-legend"><span><i class="legend-truck"></i> Your vehicle</span><span>🟨 Other vehicle</span><span><i class="legend-line"></i> Suggested route</span></div></div></section>
+   <section class="panel"><div class="panel-head"><h2>Voice navigation instructor</h2><span class="tag"><i class="dot"></i> BROWSER SPEECH</span></div><div class="panel-body">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+     <div><div id="voiceState" style="font-weight:800;font-size:14px">Voice guidance is off</div><div class="tiny muted" style="margin-top:4px">Spoken route cues and demonstrative hazard announcements</div></div>
+     <div class="action-bar"><button class="action" id="voiceToggle" onclick="toggleVoice()">▶ Start voice guidance</button><button class="action" onclick="repeatInstruction()">↻ Repeat instruction</button></div>
+    </div>
+    <div class="alert blue" style="margin-top:12px;margin-bottom:0"><div class="alert-icon">🔊</div><div><strong id="voiceInstruction">Continue along the highlighted haul-road route.</strong><p>Audio requires a supported browser and enabled device sound. Instructions are simulated, not safety-certified.</p></div></div>
+   </div></section>
+   <section class="panel"><div class="panel-head"><h2>Sensor fusion & perception telemetry</h2><span class="tag"><i class="dot amber"></i> SIMULATED INPUTS</span></div><div class="panel-body">
+    <div class="sensor-grid">
+     <div class="sensor">
+    <div class="sensor-title" style="margin-bottom:0;"><svg style="width:13px;height:13px;color:var(--cyan);display:inline-block;margin-right:5px;vertical-align:text-bottom;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z"></path></svg>RADAR · TARGET MG-102</div>
+    
+    <div class="radar-scope">
+        <div class="radar-ring-1"></div>
+        <div class="radar-ring-2"></div>
+        <div class="radar-sweep"></div>
+        <div id="radarBlip" class="blip"></div>
+    </div>
+    
+    <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+        <div class="sensor-value" id="radarDist" style="font-size:20px; line-height:1;">42 m</div>
+        <div class="sensor-foot" style="margin-top:0;">Closing target detected</div>
+    </div>
+</div>
+     <div class="sensor"><div class="sensor-title"><svg style="width:13px;height:13px;color:var(--amber);display:inline-block;margin-right:5px;vertical-align:text-bottom;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>COMPUTER VISION</div><div class="sensor-value" id="cvStatus">Vehicle detected</div><div class="sensor-foot">Bounding-box classification · demo</div></div>
+     <div class="sensor"><div class="sensor-title"><svg style="width:13px;height:13px;color:var(--red);display:inline-block;margin-right:5px;vertical-align:text-bottom;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75A2.25 2.25 0 1012 16.5a2.25 2.25 0 00-3-3.75zM12 2.25a2.25 2.25 0 00-2.25 2.25v7.5a3 3 0 104.5 0V4.5A2.25 2.25 0 0012 2.25z"></path></svg>TEMPERATURE</div><div class="sensor-value"><span id="temp">31.4</span> °C</div><div class="sensor-foot">Environmental sensor</div></div>
+     <div class="sensor"><div class="sensor-title"><svg style="width:13px;height:13px;color:var(--blue);display:inline-block;margin-right:5px;vertical-align:text-bottom;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v.01c-.13.38-1.58 4.67-4.24 7.33A6 6 0 1016.24 10.34C13.58 7.68 12.13 3.39 12 3.01V3z"></path></svg>HUMIDITY</div><div class="sensor-value"><span id="humidity">86</span>%</div><div class="sensor-foot">Environmental sensor</div></div>
+    </div>
+    <div class="alert amber" style="margin-top:12px"><div class="alert-icon">⚠</div><div><strong id="recommendation">REDUCE SPEED — VEHICLE APPROACHING</strong><p id="recommendationDetail">Maintain safe separation and follow site traffic rules. Recommendation is demonstrative.</p></div></div>
+    <div class="action-bar"><button class="action slow" onclick="setNotice('REDUCE SPEED','Reduce speed and maintain a safe following distance.')">Reduce speed</button><button class="action stop" onclick="setNotice('STOP — DEMO COMMAND','Stop only when safe and in accordance with site procedures.')">Stop</button><button class="action" onclick="setNotice('PROCEED WITH CAUTION','Confirm the route is clear and obey site traffic procedures.')">Proceed cautiously</button></div>
+   </div></section>
+  </div>
+  <div class="stack">
+   <section class="panel"><div class="panel-head"><h2>Driver alerts</h2><span class="tag">PRIORITY</span></div><div class="panel-body" id="driverAlerts">
+    <div class="alert amber"><div class="alert-icon">⚠</div><div><strong>Forward target track · 42 m</strong><p>Radar and vision detections shown as a demo.</p></div></div>
+    <div class="alert blue"><div class="alert-icon">◉</div><div><strong>${getDynamicText('Visibility reduced')}</strong><p>${getDynamicText('Fog conditions reported. Use caution.')}</p></div></div>
+   </div></section>
+   <section class="panel"><div class="panel-head"><h2>Emergency assistance</h2><span class="tag"><i class="dot"></i> CONTROL LINK · DEMO</span></div><div class="panel-body"><p class="muted" style="margin-top:0">Press to notify the control centre. The demo generates an in-site alert with this vehicle's ID and simulated location.</p><button id="callBtn" class="call-btn" onclick="sendEmergency()">☎ &nbsp; CALL CONTROL CENTRE</button><div id="callFeedback" class="tiny muted" style="margin-top:10px">No active emergency call.</div></div></section>
+   <section class="panel"><div class="panel-head"><h2>Vehicle details</h2></div><div class="panel-body"><div class="vehicle-list">
+    <div class="vehicle-row"><div><strong id="detailVehicle">KA-01-MG-104</strong><span class="muted tiny">Vehicle ID</span></div><span class="status ok">REGISTERED</span></div>
+    <div class="vehicle-row"><div><strong>Haul Road · Sector B</strong><span class="muted tiny">Simulated location</span></div><span class="status warn">LOW VISIBILITY</span></div>
+    <div class="vehicle-row"><div><strong>ESP32-S3 / Radar / Vision</strong><span class="muted tiny">Expected sensor sources</span></div><span class="status warn">DEMO DATA</span></div>
+   </div></div></section>
+  </div>
+ </div>
+</main>
+<main id="controlPage" class="hidden">
+ <div class="page-heading"><div><h1>Central operations & dispatch</h1><p>Mine-wide fleet tracking · vehicle alerts · driver assistance requests</p></div><span class="live">● MONITORING ACTIVE</span></div>
+ <div id="incomingCall"></div>
+ <div class="stats">
+  <div class="stat"><svg class="stat-icon" style="color: var(--cyan);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"></path></svg><div class="stat-label">REGISTERED VEHICLES</div><div class="stat-value">12</div><div class="stat-sub">Demo fleet</div></div>
+  <div class="stat"><svg class="stat-icon" style="color: var(--green);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"></path></svg><div class="stat-label">ACTIVE / MOVING</div><div class="stat-value">08</div><div class="stat-sub">Telemetry simulation</div></div>
+  <div class="stat"><svg class="stat-icon" style="color: var(--amber);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg><div class="stat-label">SAFETY ALERTS</div><div class="stat-value" id="alertCount">03</div><div class="stat-sub">Current demo events</div></div>
+  <div class="stat"><svg class="stat-icon" style="color: var(--red);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.896-1.596-5.496-4.196-7.092-7.092l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"></path></svg><div class="stat-label">EMERGENCY CALLS</div><div class="stat-value" id="callCount">00</div><div class="stat-sub">Unacknowledged requests</div></div>
+ </div>
+ <div class="grid-main">
+  <div class="stack">
+   <section class="panel"><div class="panel-head"><h2>Fleet geospatial overview</h2><span class="tag"><i class="dot"></i> SIMULATED GPS</span></div><div class="map-wrap"><div id="controlMap" class="leaflet-map"></div><div class="map-note">Illustrative mine map · simulated positions</div><div class="map-legend"><span><i class="legend-truck"></i> Selected vehicle</span><span>🟩 Normal</span><span>🟨 Caution</span><span>🟥 Emergency</span></div></div></section>
+   <section class="panel"><div class="panel-head"><h2>Fleet vehicle list</h2><span class="tag">12 REGISTERED</span></div><div class="table-wrap"><table><thead><tr><th>Vehicle</th><th>Location</th><th>Speed</th><th>Nearest target</th><th>Status</th><th>Action</th></tr></thead><tbody id="fleetTable"></tbody></table></div></section>
+  </div>
+  <div class="stack">
+   <section class="panel"><div class="panel-head"><h2>Live safety events</h2><span class="tag">RECENT</span></div><div class="panel-body" id="controlAlerts">
+    <div class="alert amber"><div class="alert-icon">⚠</div><div><strong>MG-102 · Vehicle proximity</strong><p>Target at 42 m · Haul Road Sector B</p></div></div>
+    <div class="alert blue"><div class="alert-icon">◉</div><div><strong>MG-104 · Low visibility</strong><p>Visibility estimate 18 m · Sector B</p></div></div>
+    <div class="alert"><div class="alert-icon">✓</div><div><strong>MG-101 · Normal operation</strong><p>Last simulated update received</p></div></div>
+   </div></section>
+   <section class="panel"><div class="panel-head"><h2>Emergency call log</h2><span class="tag" id="callLogBadge">NO ACTIVE CALLS</span></div><div class="panel-body" id="callLog"><p class="muted tiny">Driver requests will appear here with vehicle ID, location, timestamp, and acknowledgement status.</p></div></section>
+   <section class="panel"><div class="panel-head"><h2>Selected vehicle</h2><span class="tag">DETAILS</span></div><div class="panel-body" id="selectedDetails"><div class="vehicle-row"><div><strong>KA-01-MG-104</strong><span class="muted tiny">Sector B · 18 km/h</span></div><span class="status warn">CAUTION</span></div><p class="muted tiny">Select a vehicle from the fleet list to inspect its demo status.</p></div></section>
+  </div>
+ </div>
+ <div class="footer-note">Prototype only: map coordinates, vehicle positions, sensor readings and events are simulated; not for operational mine navigation or safety decisions.</div>
+</main>
+</div>
+<script>
+
+// --- Aggressive Live Translation Engine ---
+const dict = {
+    'YOUR VEHICLE': {'hi': 'आपका वाहन', 'te': 'మీ వాహనం'},
+    'CURRENT SPEED': {'hi': 'वर्तमान गति', 'te': 'ప్రస్తుత వేగం'},
+    'NEAREST VEHICLE': {'hi': 'निकटतम वाहन', 'te': 'సమీప వాహనం'},
+    'ROAD VISIBILITY': {'hi': 'सड़क दृश्यता', 'te': 'రహదారి దృశ్యమానత'},
+    'REGISTERED VEHICLES': {'hi': 'पंजीकृत वाहन', 'te': 'నమోదిత వాహనాలు'},
+    'ACTIVE / MOVING': {'hi': 'सक्रिय / गतिशील', 'te': 'క్రియాశీల / కదులుతున్నవి'},
+    'SAFETY ALERTS': {'hi': 'सुरक्षा अलर्ट', 'te': 'భద్రతా హెచ్చరికలు'},
+    'EMERGENCY CALLS': {'hi': 'आपातकालीन कॉल', 'te': 'అత్యవసర కాల్స్'},
+    'Voice navigation': {'hi': 'आवाज़ नेविगेशन (Voice Nav)', 'te': 'వాయిస్ నావిగేషన్'},
+    'Active monitoring': {'hi': 'सक्रिय निगरानी', 'te': 'క్రియాశీల పర్యవేక్షణ'},
+    'Auto-dispatch AI': {'hi': 'ऑटो-डिस्पैच एआई', 'te': 'ఆటో-డిస్పాచ్ AI'},
+    'Accept Call': {'hi': 'कॉल स्वीकार करें', 'te': 'కాల్ అంగీకరించండి'},
+    'Driver alerts': {'hi': 'ड्राइवर अलर्ट', 'te': 'డ్రైవర్ హెచ్చరికలు'},
+    'Sensor fusion': {'hi': 'सेंसर फ्यूजन', 'te': 'సెన్సార్ ఫ్యూజన్'},
+    'perception telemetry': {'hi': 'परसेप्शन टेलीमेट्री', 'te': 'పెర్సెప్షన్ టెలిమెట్రీ'},
+    'Closing target detected': {'hi': 'निकट लक्ष्य का पता चला', 'te': 'సమీప లక్ష్యం కనుగొనబడింది'},
+    'forward sector': {'hi': 'आगे का क्षेत्र', 'te': 'ముందు భాగం'},
+    'Bounding-box classification': {'hi': 'बाउंडिंग-बॉक्स वर्गीकरण', 'te': 'బౌండింగ్-బాక్స్ వర్గీకరణ'},
+    'Environmental sensor': {'hi': 'पर्यावरण सेंसर', 'te': 'పర్యావరణ సెన్సార్'},
+    'ESTABLISH EMERGENCY LINK': {'hi': 'आपातकालीन लिंक स्थापित करें', 'te': 'అత్యవసర లింక్ ఏర్పాటు చేయండి'},
+    'Operations gateway': {'hi': 'संचालन गेटवे', 'te': 'ఆపరేషన్స్ గేట్‌వే'},
+    'Select your operational workspace to continue': {'hi': 'अपना कार्यक्षेत्र चुनें', 'te': 'మీ వర్క్‌స్పేస్‌ను ఎంచుకోండి'},
+    'Driver Console': {'hi': 'ड्राइवर कंसोल', 'te': 'డ్రైవర్ కన్సోల్'},
+    'In-cab situational awareness': {'hi': 'कैब के अंदर स्थिति जागरूकता', 'te': 'క్యాబ్ లోపల పరిస్థితి అవగాహన'},
+    'Control Centre': {'hi': 'नियंत्रण केंद्र', 'te': 'కంట్రోల్ సెంటర్'},
+    'Control Center': {'hi': 'नियंत्रण केंद्र', 'te': 'కంట్రోల్ సెంటర్'},
+    'Fleet supervision': {'hi': 'बेड़ा पर्यवेक्षण', 'te': 'ఫ్లీట్ పర్యవేక్షణ'},
+    'CHOOSE REGIONAL LANGUAGE': {'hi': 'क्षेत्रीय भाषा चुनें', 'te': 'ప్రాంతీయ భాషను ఎంచుకోండి'},
+    'Select demo vehicle': {'hi': 'डेमो वाहन चुनें', 'te': 'డెమో వాహనాన్ని ఎంచుకోండి'},
+    'Enter workspace': {'hi': 'कार्यक्षेत्र में प्रवेश करें', 'te': 'వర్క్‌స్పేస్‌లోకి ప్రవేశించండి'},
+    'RADAR': {'hi': 'रडार', 'te': 'రాడార్'},
+    'COMPUTER VISION': {'hi': 'कंप्यूटर विज़न', 'te': 'కంప్యూటర్ విజన్'},
+    'TEMPERATURE': {'hi': 'तापमान', 'te': 'ఉష్ణోగ్రత'},
+    'HUMIDITY': {'hi': 'नमी', 'te': 'తేమ'},
+    'BAILADILA IRON ORE': {'hi': 'बैलाडिला लौह अयस्क', 'te': 'బైలడిలా ఇనుప ఖనిజం'},
+    'LIVE': {'hi': 'लाइव', 'te': 'లైవ్'},
+    'STOP — CRITICAL PROXIMITY': {'hi': 'रुकें — गंभीर निकटता', 'te': 'ఆగండి — క్లిష్టమైన సామీప్యత'},
+    'REDUCE SPEED — VEHICLE APPROACHING': {'hi': 'गति कम करें — वाहन आ रहा है', 'te': 'వేగం తగ్గించండి — వాహనం సమీపిస్తోంది'},
+    'PROCEED WITH CAUTION': {'hi': 'सावधानी से आगे बढ़ें', 'te': 'జాగ్రత్తగా ముందుకు వెళ్ళండి'},
+    'Stop only when safe': {'hi': 'सुरक्षित होने पर ही रुकें', 'te': 'సురక్షితంగా ఉన్నప్పుడే ఆగండి'},
+    'Maintain separation': {'hi': 'दूरी बनाए रखें', 'te': 'దూరం పాటించండి'},
+    'Continue to monitor': {'hi': 'निगरानी जारी रखें', 'te': 'పర్యవేక్షణ కొనసాగించండి'},
+    'Target estimated': {'hi': 'लक्ष्य अनुमानित', 'te': 'లక్ష్యం అంచనా'}
+};
+
+let currentLang = 'en';
+
+function setLang(lang, btnElement) {
+    currentLang = lang;
+    document.querySelectorAll('.lang-btn').forEach(b => {
+        b.style.borderColor = 'var(--line)';
+        b.style.background = 'var(--bg)';
+        b.style.color = 'var(--text)';
+    });
+    btnElement.style.borderColor = 'var(--cyan)';
+    btnElement.style.background = 'rgba(0, 229, 255, 0.1)';
+    btnElement.style.color = 'var(--cyan)';
+    forceAggressiveTranslation();
+}
+
+function translateNode(node) {
+    if (node.nodeType === 3) { // Text node
+        let text = node.nodeValue;
+        let modified = false;
+        
+        // Only attempt translation if it's not English
+        if (currentLang !== 'en') {
+            for (const [eng, trans] of Object.entries(dict)) {
+                if (text.includes(eng)) {
+                    text = text.replace(new RegExp(eng, 'g'), trans[currentLang]);
+                    modified = true;
+                }
+            }
+        } else {
+            // Restore English by reverse mapping (very aggressive but works)
+            for (const [eng, trans] of Object.entries(dict)) {
+                if (text.includes(trans['hi'])) { text = text.replace(new RegExp(trans['hi'], 'g'), eng); modified = true; }
+                if (text.includes(trans['te'])) { text = text.replace(new RegExp(trans['te'], 'g'), eng); modified = true; }
+            }
+        }
+        
+        if (modified) {
+            node.nodeValue = text;
+        }
+    } else if (node.nodeType === 1 && node.nodeName !== 'SCRIPT' && node.nodeName !== 'STYLE') {
+        // Recurse down
+        for (let i = 0; i < node.childNodes.length; i++) {
+            translateNode(node.childNodes[i]);
+        }
+    }
+}
+
+function forceAggressiveTranslation() {
+    translateNode(document.body);
+}
+
+// Run the sweeper every 500ms to catch ANY dynamic text generated by other functions!
+setInterval(forceAggressiveTranslation, 500);
+
+// --- End Aggressive Translation Engine ---
+
+function switchRole(r) {
+    role = r;
+    currentVehicle = role === 'driver' ? 'KA-01-MG-104' : 'CONTROL CENTRE';
+    
+    // Update nav buttons
+    document.getElementById('navDriver').style.color = r === 'driver' ? 'var(--cyan)' : 'var(--muted)';
+    document.getElementById('navDriver').style.background = r === 'driver' ? 'rgba(0, 229, 255, 0.1)' : 'transparent';
+    document.getElementById('navControl').style.color = r === 'control' ? 'var(--cyan)' : 'var(--muted)';
+    document.getElementById('navControl').style.background = r === 'control' ? 'rgba(0, 229, 255, 0.1)' : 'transparent';
+    
+    // Update UI visibility
+    document.getElementById('userBadge').textContent = role === 'driver' ? currentVehicle : 'Control Centre';
+    document.getElementById('driverPage').classList.toggle('hidden', role !== 'driver');
+    document.getElementById('controlPage').classList.toggle('hidden', role !== 'control');
+    
+    if (role === 'driver') {
+        document.getElementById('driverVehicle').textContent = currentVehicle.replace('KA-01-', '');
+        document.getElementById('detailVehicle').textContent = currentVehicle;
+    }
+    
+    // Force map resize
+    setTimeout(() => {
+        if (driverLeaflet) driverLeaflet.invalidateSize();
+        if (controlLeaflet) controlLeaflet.invalidateSize();
+    }, 150);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    // Auto-start without login
+    renderFleet();
+    renderMap();
+    updateDriver();
+    switchRole('control'); // Default to control center
+});
+
+
+let role='driver', currentVehicle='KA-01-MG-104', calls=[], selected='KA-01-MG-104';
+
+
+
+const fleet=[
+ {id:'KA-01-MG-101',x:548,y:165,speed:21,dist:63,status:'Normal',kind:'ok',loc:'Crusher Access'},
+ {id:'KA-01-MG-102',x:425,y:286,speed:12,dist:42,status:'Proximity caution',kind:'warn',loc:'North Haul Road'},
+ {id:'KA-01-MG-103',x:160,y:245,speed:0,dist:0,status:'Stopped',kind:'ok',loc:'Sector A'},
+ {id:'KA-01-MG-104',x:255,y:263,speed:18,dist:42,status:'Low visibility',kind:'warn',loc:'Sector B'},
+ {id:'KA-01-MG-105',x:340,y:122,speed:16,dist:80,status:'Normal',kind:'ok',loc:'Crusher Access'},
+ {id:'KA-01-MG-106',x:620,y:147,speed:8,dist:25,status:'Reduce speed',kind:'warn',loc:'Control Gate'},
+ {id:'KA-01-MG-107',x:490,y:254,speed:19,dist:90,status:'Normal',kind:'ok',loc:'Loading Zone'},
+ {id:'KA-01-MG-108',x:90,y:300,speed:0,dist:0,status:'Stopped',kind:'ok',loc:'North Haul Road'},
+ {id:'KA-01-MG-109',x:205,y:82,speed:14,dist:55,status:'Normal',kind:'ok',loc:'Crusher Access'},
+ {id:'KA-01-MG-110',x:675,y:80,speed:11,dist:31,status:'Proximity caution',kind:'warn',loc:'Control Gate'},
+ {id:'KA-01-MG-111',x:585,y:205,speed:17,dist:71,status:'Normal',kind:'ok',loc:'Loading Zone'},
+ {id:'KA-01-MG-112',x:370,y:310,speed:5,dist:18,status:'Critical proximity',kind:'danger',loc:'North Haul Road'}
+];
+function chooseRole(r){role=r;document.getElementById('driverTab').classList.toggle('active',r==='driver');document.getElementById('controlTab').classList.toggle('active',r==='control');document.getElementById('vehicleChooser').classList.toggle('hidden',r!=='driver')}
+
+
+  function chooseRole(r){
+      role=r;
+      document.getElementById('driverTab').classList.toggle('active',r==='driver');
+      document.getElementById('controlTab').classList.toggle('active',r==='control');
+  }
+  function login(){
+      role = "control";
+
+      currentVehicle = role==='driver' ? 'KA-01-MG-104' : 'CONTROL CENTRE';
+      document.getElementById('login').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      document.getElementById('userBadge').textContent=role==='driver'?currentVehicle:'Control Centre';
+      document.getElementById('driverPage').classList.toggle('hidden',role!=='driver');
+      document.getElementById('controlPage').classList.toggle('hidden',role!=='control');
+      if(role==='driver'){
+          document.getElementById('driverVehicle').textContent=currentVehicle.replace('KA-01-','');
+          document.getElementById('detailVehicle').textContent=currentVehicle;
+      }
+      renderFleet();
+      renderMap();
+      setTimeout(()=>{if(driverLeaflet)driverLeaflet.invalidateSize();if(controlLeaflet)controlLeaflet.invalidateSize()},150);
+      updateDriver();
+  }
+
+  function logout(){document.getElementById('app').classList.add('hidden');document.getElementById('login').classList.remove('hidden')}
+function renderFleet(){const tbody=document.getElementById('fleetTable');tbody.innerHTML='';fleet.forEach(v=>{const tr=document.createElement('tr');tr.innerHTML=`<td><b>${v.id}</b></td><td>${v.loc}</td><td>${v.speed} km/h</td><td>${v.dist?v.dist+' m':'—'}</td><td><span class="status ${v.kind}">${v.status}</span></td><td><button class="small-btn" onclick="selectVehicle('${v.id}')">View</button></td>`;tbody.appendChild(tr)})}
+let driverLeaflet=null, controlLeaflet=null, driverMarkers={}, controlMarkers={};
+const roadCoords=[[18.6225,81.2423],[18.6235,81.2473],[18.6215,81.2533],[18.6265,81.2593],[18.6325,81.2653],[18.6385,81.2713]];
+const altRoad=[[18.6475,81.2403],[18.6505,81.2483],[18.6485,81.2563],[18.6545,81.2653],[18.6535,81.2743]];
+const positions={
+ 'KA-01-MG-101':[18.6335,81.2683],'KA-01-MG-102':[18.6235,81.2553],'KA-01-MG-103':[18.6205,81.2493],
+ 'KA-01-MG-104':[18.6255,81.2583],'KA-01-MG-105':[18.6505,81.2543],'KA-01-MG-106':[18.6535,81.2713],
+ 'KA-01-MG-107':[18.6295,81.2653],'KA-01-MG-108':[18.6195,81.2413],'KA-01-MG-109':[18.6465,81.2443],
+ 'KA-01-MG-110':[18.6555,81.2743],'KA-01-MG-111':[18.6365,81.2703],'KA-01-MG-112':[18.6215,81.2603]
+};
+function markerIcon(id,kind,active=false){const color=active?'#17c7df':kind==='danger'?'#f05269':kind==='warn'?'#f2b72f':'#39c879';return L.divIcon({className:'',html:`<div style="background:${color};color:#071523;border:2px solid #e9f5ff;border-radius:7px;padding:4px 6px;font-size:10px;font-weight:900;box-shadow:0 2px 8px #0008;white-space:nowrap">${id.slice(-3)}</div>`,iconSize:[42,26],iconAnchor:[21,13]})}
+function makeBaseMap(id,center){const map=L.map(id,{zoomControl:true}).setView(center,14);L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',{maxZoom:20,attribution:'Map data © Google Satellite'}).addTo(map);L.polyline(roadCoords,{color:'#f6b934',weight:6,opacity:.9,dashArray:'9 9'}).addTo(map).bindPopup('Demonstration haul-road route');L.polyline(altRoad,{color:'#9caec0',weight:5,opacity:.85}).addTo(map);L.circle([18.6255,81.2583],{radius:170,color:'#f6b934',weight:1,fillOpacity:.07}).addTo(map);return map}
+function renderMap(){
+ if(!window.L)return;
+ if(!driverLeaflet&&document.getElementById('driverMap')){driverLeaflet=makeBaseMap('driverMap',positions[currentVehicle]||positions['KA-01-MG-104']);}
+ if(!controlLeaflet&&document.getElementById('controlMap')){controlLeaflet=makeBaseMap('controlMap',[18.6365,81.2583]);}
+ fleet.forEach(v=>{
+  const pos=positions[v.id];if(!pos)return;
+  if(driverLeaflet){if(driverMarkers[v.id])driverLeaflet.removeLayer(driverMarkers[v.id]);driverMarkers[v.id]=L.marker(pos,{icon:markerIcon(v.id,v.kind,v.id===currentVehicle)}).addTo(driverLeaflet).bindPopup(`<b>${v.id}</b><br>${v.status}<br>${v.speed} km/h`)}
+  if(controlLeaflet){if(controlMarkers[v.id])controlLeaflet.removeLayer(controlMarkers[v.id]);controlMarkers[v.id]=L.marker(pos,{icon:markerIcon(v.id,v.kind,v.id===selected)}).addTo(controlLeaflet).bindPopup(`<b>${v.id}</b><br>${v.loc}<br>${v.status}<br>${v.speed} km/h`)}
+ });
+ if(driverLeaflet){const target=positions[currentVehicle]||positions['KA-01-MG-104'];driverLeaflet.setView(target,15);const next=positions['KA-01-MG-102'];L.polyline([target,next],{color:'#55d6e8',weight:4,opacity:.9}).addTo(driverLeaflet).bindPopup('Illustrative route segment');}
+}
+function selectVehicle(id){selected=id;const v=fleet.find(x=>x.id===id);document.getElementById('selectedDetails').innerHTML=`<div class="vehicle-row"><div><strong>${v.id}</strong><span class="muted tiny">${v.loc} · ${v.speed} km/h</span></div><span class="status ${v.kind}">${v.status}</span></div><p class="muted tiny">Nearest target: ${v.dist?v.dist+' m':'No target reported'} · Last update: just now (simulated)</p>`;renderMap();if(controlLeaflet&&positions[id])controlLeaflet.panTo(positions[id])}
+function setNotice(title,detail){document.getElementById('recommendation').textContent=title;document.getElementById('recommendationDetail').textContent=detail}
+function updateDriver(){const d=Math.max(8,42+Math.round(Math.random()*12-6));document.getElementById('nearDistance').textContent=d;document.getElementById('radarDist').textContent=d+' m';document.getElementById('speed').textContent=Math.max(6,18+Math.round(Math.random()*4-2));document.getElementById('visibility').textContent=15+Math.round(Math.random()*9);document.getElementById('temp').textContent=(31+Math.random()*1.5).toFixed(1);document.getElementById('humidity').textContent=84+Math.round(Math.random()*5);document.getElementById('nearName').textContent='MG-102 · ahead';if(d<20){setNotice('STOP — CRITICAL PROXIMITY',`A target is estimated at ${d} m. Stop only when safe and follow site procedures.`);if(voiceEnabled){document.getElementById('voiceInstruction').textContent='Critical proximity. Stop when safe and follow site procedures.';speak('Critical proximity. Stop when safe and follow site procedures.')}}else if(d<45){setNotice('REDUCE SPEED — VEHICLE APPROACHING',`Target estimated at ${d} m. Maintain separation and follow site traffic rules.`);if(voiceEnabled){document.getElementById('voiceInstruction').textContent='Vehicle approaching. Reduce speed.';speak('Vehicle approaching. Reduce speed.')}}else setNotice('PROCEED WITH CAUTION',`Target estimated at ${d} m. Continue to monitor the road and obey site rules.`)}
+function sendEmergency(){if(calls.some(c=>c.vehicle===currentVehicle&&!c.ack)){document.getElementById('callFeedback').textContent='An unacknowledged call is already active.';return}const now=new Date();const stamp=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});calls.unshift({vehicle:currentVehicle,location:'Haul Road · Sector B',time:stamp,ack:false});document.getElementById('callFeedback').textContent=`Call request sent at ${stamp}. Waiting for control-centre acknowledgement (demo).`;document.getElementById('callBtn').textContent='☎ CALL REQUEST SENT';document.getElementById('callBtn').disabled=true;updateCalls()}
+function updateCalls(){const active=calls.filter(c=>!c.ack).length;const count=document.getElementById('callCount');if(count)count.textContent=String(active).padStart(2,'0');const log=document.getElementById('callLog');if(!log)return;document.getElementById('callLogBadge').textContent=active?`${active} ACTIVE`:'NO ACTIVE CALLS';if(!calls.length){log.innerHTML='<p class="muted tiny">Driver requests will appear here with vehicle ID, location, timestamp, and acknowledgement status.</p>';document.getElementById('incomingCall').innerHTML='';return}log.innerHTML='';calls.forEach((c,i)=>{const el=document.createElement('div');el.className='alert '+(c.ack?'blue':'');el.innerHTML=`<div class="alert-icon">${c.ack?'✓':'☎'}</div><div style="flex:1"><strong>${c.vehicle} · ${c.ack?'Acknowledged':'Emergency assistance requested'}</strong><p>${c.location} · ${c.time}</p>${c.ack?'<p>Control centre acknowledged request.</p>':`<button class="small-btn" style="margin-top:8px" onclick="ackCall(${i})">Acknowledge</button>`}</div>`;log.appendChild(el)});const c=calls.find(x=>!x.ack);document.getElementById('incomingCall').innerHTML=c?`<div class="call-banner"><div><strong>☎ INCOMING DRIVER CALL · ${c.vehicle}</strong><div class="tiny" style="color:#e7bdc6">${c.location} · ${c.time} · Awaiting acknowledgement</div></div><button class="ack" onclick="ackCall(${calls.indexOf(c)})">Acknowledge</button></div>`:''}
+function ackCall(i){calls[i].ack=true;updateCalls()}
+
+let voiceEnabled=false;
+const spokenCues=['Continue along the highlighted haul-road route.','In 200 metres, keep to the left side of the haul road.','Caution. Low visibility reported ahead. Reduce speed and maintain safe separation.','Vehicle detected ahead. Reduce speed and monitor the forward path.'];
+let cueIndex=0;
+function speak(text){if(!('speechSynthesis' in window)){document.getElementById('voiceState').textContent='Speech synthesis is not supported by this browser';return}window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);utterance.rate=0.92;utterance.pitch=1;utterance.volume=1;window.speechSynthesis.speak(utterance)}
+function toggleVoice(){voiceEnabled=!voiceEnabled;document.getElementById('voiceToggle').textContent=voiceEnabled?'■ Stop voice guidance':'▶ Start voice guidance';document.getElementById('voiceState').textContent=voiceEnabled?'Voice guidance active':'Voice guidance is off';if(voiceEnabled){cueIndex=0;announceCue()}else if('speechSynthesis'in window)window.speechSynthesis.cancel()}
+function announceCue(){if(!voiceEnabled)return;const text=spokenCues[cueIndex%spokenCues.length];document.getElementById('voiceInstruction').textContent=text;speak(text);cueIndex++}
+function repeatInstruction(){const text=document.getElementById('voiceInstruction').textContent;if(voiceEnabled)speak(text);else document.getElementById('voiceState').textContent='Start voice guidance to hear instructions'}
+
+setInterval(()=>{if(!document.getElementById('app').classList.contains('hidden')&&role==='driver')updateDriver()},4500);
+</script>
+</body>
+</html>
