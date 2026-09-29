@@ -13,3 +13,9 @@ The proposed system works as a multi-sensor driver-assistance and fleet-monitori
 
 ![Hardware Schematic](hardware_schematic.jpg)
 
+
+
+## Project Simulation Video
+
+<video src="https://github.com/chinmayeekashikarec25/137131_SHADOW_VAULT/raw/main/sih_final_video.mp4" controls="controls" style="max-width: 100%;"></video>
+
