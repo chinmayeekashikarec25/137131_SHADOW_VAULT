@@ -8,10 +8,6 @@ This document outlines the working principles and specific roles of each hardwar
 * **Function:** Acts as the primary data acquisition and edge-processing unit on each dumper.
 * **Working:** The ESP32 continuously polls the entire sensor array at high frequencies. It performs local calculations (such as Time-To-Collision) to ensure extremely low-latency warnings. By processing data at the edge, the system doesn't rely entirely on the cloud, which is critical in remote mining zones with poor connectivity.
 
-### Raspberry Pi (Central / Advanced Processing)
-* **Function:** Handles higher-level computer vision algorithms and central data aggregation.
-* **Working:** Processes the heavy visual data from the RGB cameras and thermal arrays. It translates the raw sensor data into the UI dashboard elements and handles the complex logic required for the centralized control room.
-
 ---
 
 ## 2. Environmental & Proximity Sensors
@@ -27,10 +23,6 @@ This document outlines the working principles and specific roles of each hardwar
 ### HC-SR04 (Ultrasonic Sensors)
 * **Function:** Provides high-precision, near-field obstacle detection.
 * **Working:** Emits high-frequency sound waves (ultrasound) and listens for the echo. This is primarily used for close-quarters maneuvering (like reversing or tight cornering in the pit) where radar might have blind spots. If a rock or berm is too close, the ultrasonic sensor triggers an immediate stop warning.
-
-### RGB Camera (Visual Detection)
-* **Function:** Standard optical object classification and lane detection.
-* **Working:** Feeds real-time video to the computer vision algorithms on the Raspberry Pi. During clear weather or moderate visibility, it acts as the primary tool for identifying the exact type of vehicle ahead and reading environmental markers.
 
 ---
 
